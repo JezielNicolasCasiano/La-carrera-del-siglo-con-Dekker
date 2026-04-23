@@ -19,8 +19,6 @@ public class AnimalSemaforo extends Animal{
     public void run() {
 
         while(this.getAvance() <=571){
-            try{
-                semaforo.acquire();
 
                 this.setAvance(this.getAvance() + random.nextInt(21));
                 random.setSeed(random.nextLong());
@@ -29,17 +27,21 @@ public class AnimalSemaforo extends Animal{
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
+            try{
+                semaforo.acquire();
+
                 Platform.runLater(() ->{
                     this.getListener().actualizarProgreso(this.getNombre(),this.getAvance());
                 });
                 semaforo.release();
             } catch (RuntimeException | InterruptedException e) {
                 throw new RuntimeException(e);
-            }finally {
-                Platform.runLater(()->{
-                    this.getListener().alFinalizar(this.getNombre());
-                });}
+            }
+
         }
+        Platform.runLater(()->{
+            this.getListener().alFinalizar(this.getNombre());
+        });
     }
 }
 
