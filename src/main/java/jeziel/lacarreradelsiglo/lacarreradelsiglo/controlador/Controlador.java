@@ -13,16 +13,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Semaphore;
 
 public class Controlador implements Initializable, AnimalListener {
     Animal conejo;
     Animal tortuga;
     Animal capibara1;
     Animal capibara2;
-    AnimalProductor planta;
+    Semaphore semaforo;
     private final Map<String, ImageView> imagenesCompetidores = new HashMap<>();
     private final Map<String, Label> caminoCompetidores = new HashMap<>();
-    private Buffer buffer;
 
     @FXML
     private Label ganador;
@@ -60,8 +60,7 @@ public class Controlador implements Initializable, AnimalListener {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        buffer = new Buffer();
-        planta = new AnimalProductor(buffer);
+        semaforo = new Semaphore(1);
         capibaraImagen1.setVisible(false);
         capibaraImagen2.setVisible(false);
         capibaraImagen1.setManaged(false);
@@ -75,8 +74,8 @@ public class Controlador implements Initializable, AnimalListener {
         caminoCompetidores.put("capibara1",caminoConejo);
         caminoCompetidores.put("capibara2", caminoTortuga);
         ganador.setText("");
-        conejo = new AnimalConsumidor("Conejo", this, buffer);
-        tortuga = new AnimalConsumidor("Tortuga", this, buffer);
+        conejo = new AnimalSemaforo("Conejo", this, semaforo);
+        tortuga = new AnimalSemaforo("Tortuga", this, semaforo);
         capibara1 = new Animal("capibara1", this);
         capibara2 = new Animal("capibara2", this);
 
@@ -102,8 +101,6 @@ public class Controlador implements Initializable, AnimalListener {
         tortugaImagen.setTranslateX(0);
         capibaraImagen1.setTranslateX(0);
         capibaraImagen2.setTranslateX(0);
-        Thread t1 = new Thread(planta);
-        t1.start();
 
         CompletableFuture<Void> carreraConejo = CompletableFuture.runAsync(conejo);
         CompletableFuture<Void> carreraTortuga = CompletableFuture.runAsync(tortuga);
