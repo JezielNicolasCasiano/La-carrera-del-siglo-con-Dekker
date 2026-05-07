@@ -77,8 +77,8 @@ public class Controlador implements Initializable, AnimalListener {
         caminoCompetidores.put("capibara1",caminoConejo);
         caminoCompetidores.put("capibara2", caminoTortuga);
         ganador.setText("");
-        conejo = new AnimalDekker("Conejo", this);
-        tortuga = new AnimalDekker("Tortuga", this);
+        conejo = new AnimalDekker("Conejo", this, 0);
+        tortuga = new AnimalDekker("Tortuga", this, 1);
         turnos[0] = 0;
         turnos[1] = 1;
         turno = turnos[indice];

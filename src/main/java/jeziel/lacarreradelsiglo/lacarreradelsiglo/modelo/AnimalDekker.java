@@ -11,11 +11,13 @@ public class AnimalDekker implements Runnable {
     public static volatile long turno;
     public static volatile long[] turnos;
     public static volatile int indice = 0;
+    private int id;
 
 
-    public AnimalDekker(String nombre, AnimalListener listener) {
+    public AnimalDekker(String nombre, AnimalListener listener, int id) {
         this.nombre = nombre;
         this.listener = listener;
+        this.id = id;
     }
 
     public String getNombre() {
@@ -46,26 +48,25 @@ public class AnimalDekker implements Runnable {
     @Override
     public void run() {
         while(this.avance<=571){
-            while (turno != Thread.currentThread().threadId())
-                this.avance+=random.nextInt(21);
+            while (turno != this.id){Thread.yield();}
+            this.avance+=random.nextInt(21);
+            /*try {
+                Thread.sleep(150);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }*/
+            Platform.runLater(() ->{
+                listener.actualizarProgreso(this.nombre,this.avance);
+            });
 
-                try {
-                    Thread.sleep(150);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                Platform.runLater(() ->{
-                    listener.actualizarProgreso(this.nombre,this.avance);
-                });
-
-                Platform.runLater(()->{
-                    listener.alFinalizar(this.nombre);
-                });
-                if(indice == 2)
-                    indice = 0;
-                else
-                    ++indice;
-                turno = turnos[indice];
+            Platform.runLater(()->{
+                listener.alFinalizar(this.nombre);
+            });
+            if(indice == 1) {
+                indice = 0;
+            }else{
+                ++indice;}
+            turno = turnos[indice];
         }
     }
 }
