@@ -15,14 +15,17 @@ import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Semaphore;
 
+
 public class Controlador implements Initializable, AnimalListener {
-    Animal conejo;
-    Animal tortuga;
+    AnimalDekker conejo;
+    AnimalDekker tortuga;
     Animal capibara1;
     Animal capibara2;
-    Semaphore semaforo;
     private final Map<String, ImageView> imagenesCompetidores = new HashMap<>();
     private final Map<String, Label> caminoCompetidores = new HashMap<>();
+    public static volatile long turno;
+    public static volatile long[] turnos;
+    public static volatile int indice = 0;
 
     @FXML
     private Label ganador;
@@ -60,7 +63,7 @@ public class Controlador implements Initializable, AnimalListener {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        semaforo = new Semaphore(1);
+        turnos = new long[2];
         capibaraImagen1.setVisible(false);
         capibaraImagen2.setVisible(false);
         capibaraImagen1.setManaged(false);
@@ -74,8 +77,11 @@ public class Controlador implements Initializable, AnimalListener {
         caminoCompetidores.put("capibara1",caminoConejo);
         caminoCompetidores.put("capibara2", caminoTortuga);
         ganador.setText("");
-        conejo = new AnimalSemaforo("Conejo", this, semaforo);
-        tortuga = new AnimalSemaforo("Tortuga", this, semaforo);
+        conejo = new AnimalDekker("Conejo", this);
+        tortuga = new AnimalDekker("Tortuga", this);
+        turnos[0] = 0;
+        turnos[1] = 1;
+        turno = turnos[indice];
         capibara1 = new Animal("capibara1", this);
         capibara2 = new Animal("capibara2", this);
 
